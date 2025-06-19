@@ -13,7 +13,6 @@ import {
   encodeFunctionData,
   erc20Abi,
   getAddress,
-  maxUint256,
   parseUnits,
 } from "viem";
 import { bridgeQuote, getTokenMap } from "./util";
