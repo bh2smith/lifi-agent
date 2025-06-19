@@ -8,7 +8,14 @@ import {
   signRequestFor,
   validateInput,
 } from "@bitte-ai/agent-sdk";
-import { Address, getAddress, parseUnits } from "viem";
+import {
+  Address,
+  encodeFunctionData,
+  erc20Abi,
+  getAddress,
+  maxUint256,
+  parseUnits,
+} from "viem";
 import { bridgeQuote, getTokenMap } from "./util";
 
 interface Input {
@@ -49,10 +56,10 @@ export async function GET(request: Request) {
         { status: 400 },
       );
     }
-
+    const bridgeAmount = parseUnits(amount.toString(), sellToken.decimals);
     const quote = await bridgeQuote({
       account: getAddress(evmAddress),
-      amount: parseUnits(amount.toString(), sellToken.decimals),
+      amount: bridgeAmount,
       src: { chain: srcChain, address: sellToken.address },
       dest: { chain: dstChain, address: buyToken.address },
     });
@@ -63,14 +70,23 @@ export async function GET(request: Request) {
     }
 
     const { to, value, data } = quote.transactionRequest;
-
+    const bridgeContract = getAddress(to!);
     const signRequestTransaction = signRequestFor({
       chainId: srcChain,
       metaTransactions: [
-        { to: to!, value: value || "0x00", data: data || "0x" },
+        {
+          to: buyToken.address,
+          value: "0x00",
+          data: encodeFunctionData({
+            abi: erc20Abi,
+            functionName: "approve",
+            args: [bridgeContract, bridgeAmount],
+          }),
+        }, // Approve Source token
+        { to: bridgeContract, value: value || "0x00", data: data || "0x" },
       ],
     });
-
+    console.log("Responding with", signRequestTransaction);
     return NextResponse.json(
       { evmSignRequest: signRequestTransaction, meta: quote },
       { status: 200 },
