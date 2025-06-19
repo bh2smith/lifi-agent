@@ -50,6 +50,17 @@ export async function GET() {
         instructions:
           "You create near and evm transactions related to bridging.",
         tools: [{ type: "generate-evm-tx" }],
+        chainIds: [
+          1, // Mainnet
+          10, // Optimism
+          56, // Binance Smart Chain (BSC)
+          137, // Polygon
+          8453, // Base (Coinbase L2)
+          42161, // Arbitrum One
+          42220, // CELO
+          43114, // Avalanche
+          81457, // Blast
+        ],
       },
     },
     paths: {
