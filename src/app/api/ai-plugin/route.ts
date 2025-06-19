@@ -50,6 +50,8 @@ export async function GET() {
         instructions:
           "You create near and evm transactions related to bridging.",
         tools: [{ type: "generate-evm-tx" }],
+        image: `${PLUGIN_URL}/lifi.png`,
+        categories: ["defi", "bridge"],
         chainIds: [
           1, // Mainnet
           10, // Optimism
