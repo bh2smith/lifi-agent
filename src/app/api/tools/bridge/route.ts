@@ -75,7 +75,7 @@ export async function GET(request: Request) {
       metaTransactions: [
         {
           to: buyToken.address,
-          value: "0x00",
+          value: "0x0",
           data: encodeFunctionData({
             abi: erc20Abi,
             functionName: "approve",
@@ -87,7 +87,7 @@ export async function GET(request: Request) {
     });
     console.log("Responding with", signRequestTransaction);
     return NextResponse.json(
-      { evmSignRequest: signRequestTransaction, meta: quote },
+      { transaction: signRequestTransaction, meta: quote },
       { status: 200 },
     );
   } catch (error) {
