@@ -96,7 +96,7 @@ export async function GET() {
         amount: {
           name: "amount",
           in: "query",
-          description: "amount in Units",
+          description: "amount in Units (NOT WEI)",
           required: true,
           schema: {
             type: "number",
