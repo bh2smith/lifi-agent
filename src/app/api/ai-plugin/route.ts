@@ -48,7 +48,7 @@ export async function GET() {
         name: "LiFi Bridge Agent",
         description: "An agent facilitating brige transaction.",
         instructions:
-          "You create near and evm transactions related to bridging.",
+          "You create near and evm transactions related to bridging. You should not infer token decimals and always send the units for amount as specified by the user.",
         tools: [{ type: "generate-evm-tx" }],
         image: `${PLUGIN_URL}/lifi.png`,
         categories: ["defi", "bridge"],
