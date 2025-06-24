@@ -2,10 +2,12 @@ import { NextResponse } from "next/server";
 import {
   addressField,
   addressOrSymbolField,
+  BlockchainMapping,
   FieldParser,
   getTokenDetails,
   numberField,
   signRequestFor,
+  TokenInfo,
   validateInput,
 } from "@bitte-ai/agent-sdk";
 import {
@@ -16,6 +18,7 @@ import {
   parseUnits,
 } from "viem";
 import { bridgeQuote, getTokenMap } from "./util";
+import { LiFiStep } from "@lifi/sdk";
 
 interface Input {
   srcChain: number;
@@ -39,32 +42,9 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     console.log("quote/", searchParams);
-    const { srcChain, srcToken, dstChain, dstToken, amount, evmAddress } =
-      validateInput<Input>(searchParams, parsers);
-    const tokenMap = await getTokenMap();
-
-    const [buyToken, sellToken] = await Promise.all([
-      getTokenDetails(dstChain, dstToken, tokenMap),
-      getTokenDetails(srcChain, srcToken, tokenMap),
-    ]);
-    if (!(buyToken && sellToken)) {
-      return NextResponse.json(
-        {
-          error: `buy OR sell token not found: buy=${buyToken}, sell=${sellToken}`,
-        },
-        { status: 400 },
-      );
-    }
-    console.log(`Tokens: sell=${sellToken}, buy=${buyToken}`);
-    const bridgeAmount = parseUnits(amount.toString(), sellToken.decimals);
-    console.log("Bridge Amount", bridgeAmount);
-    const quote = await bridgeQuote({
-      account: getAddress(evmAddress),
-      amount: bridgeAmount,
-      src: { chain: srcChain, address: sellToken.address },
-      dest: { chain: dstChain, address: buyToken.address },
-    });
-    console.log("got Quote with ID", quote.id);
+    const input = validateInput<Input>(searchParams, parsers);
+    console.log("Parsed Input", input)
+    const { quote, buyToken, bridgeAmount } = await logic(await getTokenMap(), input);
     // Create EVM transaction object
     if (!quote.transactionRequest) {
       return NextResponse.json({ error: "No route found" }, { status: 400 });
@@ -73,7 +53,7 @@ export async function GET(request: Request) {
     const { to, value, data } = quote.transactionRequest;
     const bridgeContract = getAddress(to!);
     const signRequestTransaction = signRequestFor({
-      chainId: srcChain,
+      chainId: input.srcChain,
       metaTransactions: [
         {
           to: buyToken.address,
@@ -99,4 +79,33 @@ export async function GET(request: Request) {
       { status: 500 },
     );
   }
+}
+
+export async function logic(
+  tokenMap: BlockchainMapping,
+  input: Input,
+): Promise<{ buyToken: TokenInfo; bridgeAmount: bigint; quote: LiFiStep }> {
+  const { srcChain, srcToken, dstChain, dstToken, amount, evmAddress } = input;
+  const [buyToken, sellToken] = await Promise.all([
+    getTokenDetails(dstChain, dstToken, tokenMap),
+    getTokenDetails(srcChain, srcToken, tokenMap),
+  ]);
+  if (!(buyToken && sellToken)) {
+    throw new Error(
+      `buy OR sell token not found: buy=${buyToken}, sell=${sellToken}`,
+    );
+  }
+  console.log(
+    `Tokens: sell=${JSON.stringify(sellToken)}, buy=${JSON.stringify(buyToken)}`,
+  );
+  const bridgeAmount = parseUnits(amount.toString(), sellToken.decimals);
+  console.log("Bridge Amount", bridgeAmount);
+  const quote = await bridgeQuote({
+    account: getAddress(evmAddress),
+    amount: bridgeAmount,
+    src: { chain: srcChain, address: sellToken.address },
+    dest: { chain: dstChain, address: buyToken.address },
+  });
+  console.log("got Quote with ID", quote.id);
+  return { quote, buyToken, bridgeAmount };
 }
