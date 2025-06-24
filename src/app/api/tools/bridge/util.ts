@@ -4,6 +4,7 @@ import {
   addressOrSymbolField,
   BlockchainMapping,
   FieldParser,
+  floatField,
   getTokenDetails,
   loadTokenMap,
   numberField,
@@ -82,7 +83,7 @@ export interface Input {
 export const parsers: FieldParser<Input> = {
   srcChain: numberField,
   dstChain: numberField,
-  amount: numberField,
+  amount: floatField,
   evmAddress: addressField,
   srcToken: addressOrSymbolField,
   dstToken: addressOrSymbolField,

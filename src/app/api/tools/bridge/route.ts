@@ -41,10 +41,8 @@ export async function GET(request: Request) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error generating EVM transaction:", error);
-    return NextResponse.json(
-      { error: "Failed to generate EVM transaction" },
-      { status: 500 },
-    );
+    const message = `Error generating EVM transaction: ${error}`;
+    console.error(message);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

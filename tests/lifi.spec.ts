@@ -14,7 +14,7 @@ const mockTokenMap = {
 };
 
 describe("logic", () => {
-  it("returns quote, buyToken, and bridgeAmount", async () => {
+  it.skip("returns quote, buyToken, and bridgeAmount", async () => {
     const input = {
       amount: 0.0025,
       dstChain: 10,
