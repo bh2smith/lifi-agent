@@ -9,7 +9,7 @@
     "build:deploy": "next build && make-agent deploy -u https://lifi-agent.vercel.app/",
     "start": "next start",
     "lint": "next lint",
-    "fmt": "prettier --write **/*.ts"
+    "fmt": "prettier --write '**/*.ts'"
   },
   "dependencies": {
     "@bitte-ai/agent-sdk": "^0.2.0",

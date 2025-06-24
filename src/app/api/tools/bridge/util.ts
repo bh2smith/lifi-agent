@@ -1,9 +1,18 @@
 // This is all LiFi Bridge: https://li.fi/api-sdk/
-import { BlockchainMapping, loadTokenMap } from "@bitte-ai/agent-sdk";
+import {
+  addressField,
+  addressOrSymbolField,
+  BlockchainMapping,
+  FieldParser,
+  getTokenDetails,
+  loadTokenMap,
+  numberField,
+  TokenInfo,
+} from "@bitte-ai/agent-sdk";
 import type { ChainId, LiFiStep } from "@lifi/sdk";
 import { createConfig, getQuote } from "@lifi/sdk";
 import { unstable_cache } from "next/cache";
-import type { Address } from "viem";
+import { getAddress, parseUnits, type Address } from "viem";
 
 createConfig({ integrator: "bh2smith.eth" });
 
@@ -59,4 +68,51 @@ function getEnvVar(key: string): string {
     throw new Error(`${key} is not set`);
   }
   return value;
+}
+
+export interface Input {
+  srcChain: number;
+  dstChain: number;
+  amount: number;
+  evmAddress: Address;
+  srcToken: string;
+  dstToken: string;
+}
+
+export const parsers: FieldParser<Input> = {
+  srcChain: numberField,
+  dstChain: numberField,
+  amount: numberField,
+  evmAddress: addressField,
+  srcToken: addressOrSymbolField,
+  dstToken: addressOrSymbolField,
+};
+
+export async function logic(
+  tokenMap: BlockchainMapping,
+  input: Input,
+): Promise<{ buyToken: TokenInfo; bridgeAmount: bigint; quote: LiFiStep }> {
+  const { srcChain, srcToken, dstChain, dstToken, amount, evmAddress } = input;
+  const [buyToken, sellToken] = await Promise.all([
+    getTokenDetails(dstChain, dstToken, tokenMap),
+    getTokenDetails(srcChain, srcToken, tokenMap),
+  ]);
+  if (!(buyToken && sellToken)) {
+    throw new Error(
+      `buy OR sell token not found: buy=${buyToken}, sell=${sellToken}`,
+    );
+  }
+  console.log(
+    `Tokens: sell=${JSON.stringify(sellToken)}, buy=${JSON.stringify(buyToken)}`,
+  );
+  const bridgeAmount = parseUnits(amount.toString(), sellToken.decimals);
+  console.log("Bridge Amount", bridgeAmount);
+  const quote = await bridgeQuote({
+    account: getAddress(evmAddress),
+    amount: bridgeAmount,
+    src: { chain: srcChain, address: sellToken.address },
+    dest: { chain: dstChain, address: buyToken.address },
+  });
+  console.log("got Quote with ID", quote.id);
+  return { quote, buyToken, bridgeAmount };
 }
