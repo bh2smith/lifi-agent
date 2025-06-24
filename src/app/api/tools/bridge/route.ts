@@ -55,7 +55,9 @@ export async function GET(request: Request) {
         { status: 400 },
       );
     }
+    console.log(`Tokens: sell=${sellToken}, buy=${buyToken}`);
     const bridgeAmount = parseUnits(amount.toString(), sellToken.decimals);
+    console.log("Bridge Amount", bridgeAmount);
     const quote = await bridgeQuote({
       account: getAddress(evmAddress),
       amount: bridgeAmount,
