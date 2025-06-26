@@ -12,7 +12,7 @@
     "fmt": "prettier --write '**/*.ts'"
   },
   "dependencies": {
-    "@bitte-ai/agent-sdk": "^0.2.0",
+    "@bitte-ai/agent-sdk": "^0.2.1",
     "@lifi/sdk": "^3.7.9",
     "ajv": "^8.17.1",
     "next": "^15.3.4",
@@ -23,13 +23,13 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.0.3",
+    "@types/node": "^24.0.4",
     "concurrently": "^9.2.0",
     "eslint": "^9.29.0",
     "eslint-config-next": "^15.3.4",
-    "jest": "^30.0.2",
+    "jest": "^30.0.3",
     "make-agent": "0.3.2",
-    "prettier": "^3.5.3",
+    "prettier": "^3.6.1",
     "typescript": "5.8.3"
   }
 }
