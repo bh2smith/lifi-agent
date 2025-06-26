@@ -8,6 +8,7 @@ import {
   SignRequestSchema,
   AddressSchema,
   MetaTransactionSchema,
+  amountParam,
 } from "@bitte-ai/agent-sdk";
 export async function GET() {
   const pluginData = {
@@ -73,16 +74,7 @@ export async function GET() {
         chainId: chainIdParam,
         srcToken: { ...addressOrSymbolParam, name: "srcToken" },
         dstToken: { ...addressOrSymbolParam, name: "dstToken" },
-        amount: {
-          name: "amount",
-          in: "query",
-          description: "amount in Units (NOT WEI)",
-          required: true,
-          schema: {
-            type: "number",
-          },
-          example: 0.123,
-        },
+        amount: amountParam,
         address: addressParam,
         evmAddress: { ...addressOrSymbolParam, name: "evmAddress" },
       },
