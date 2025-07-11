@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { signRequestFor, validateInput } from "@bitte-ai/agent-sdk";
-import { encodeFunctionData, erc20Abi, getAddress } from "viem";
+import { encodeFunctionData, erc20Abi, getAddress, Hex } from "viem";
 import { getTokenMap, Input, logic, parsers } from "./util";
 
 export async function GET(request: Request) {
@@ -32,7 +32,11 @@ export async function GET(request: Request) {
             args: [bridgeContract, bridgeAmount],
           }),
         }, // Approve Source token
-        { to: bridgeContract, value: value || "0x00", data: data || "0x" },
+        {
+          to: bridgeContract,
+          value: (value || "0x00") as Hex,
+          data: (data || "0x") as Hex,
+        },
       ],
     });
     console.log("Responding with", signRequestTransaction);
