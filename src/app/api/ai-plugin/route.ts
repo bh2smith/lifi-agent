@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ACCOUNT_ID, PLUGIN_URL } from "../../config";
+import { ACCOUNT_ID, PLUGIN_URL, SUPPORTED_CHAIN_IDS } from "../../config";
 import {
   chainIdParam,
   addressParam,
@@ -33,17 +33,7 @@ export async function GET() {
         tools: [{ type: "generate-evm-tx" }],
         image: `${PLUGIN_URL}/lifi.png`,
         categories: ["defi", "bridge"],
-        chainIds: [
-          1, // Mainnet
-          10, // Optimism
-          56, // Binance Smart Chain (BSC)
-          137, // Polygon
-          8453, // Base (Coinbase L2)
-          42161, // Arbitrum One
-          42220, // CELO
-          43114, // Avalanche
-          81457, // Blast
-        ],
+        chainIds: SUPPORTED_CHAIN_IDS,
       },
     },
     paths: {

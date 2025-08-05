@@ -1,4 +1,5 @@
 // This is all LiFi Bridge: https://li.fi/api-sdk/
+import { SUPPORTED_CHAIN_IDS } from "@/src/app/config";
 import {
   addressField,
   addressOrSymbolField,
@@ -51,7 +52,7 @@ export async function getTokenMap(): Promise<BlockchainMapping> {
   const getCachedTokenMap = unstable_cache(
     async () => {
       console.log("Loading TokenMap...");
-      return loadTokenMap(getEnvVar("TOKEN_MAP_URL"));
+      return loadTokenMap(SUPPORTED_CHAIN_IDS);
     },
     ["token-map"], // cache key
     {
@@ -61,14 +62,6 @@ export async function getTokenMap(): Promise<BlockchainMapping> {
   );
 
   return getCachedTokenMap();
-}
-
-function getEnvVar(key: string): string {
-  const value = process.env[key];
-  if (!value) {
-    throw new Error(`${key} is not set`);
-  }
-  return value;
 }
 
 export interface Input {
