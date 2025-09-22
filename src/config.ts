@@ -1,7 +1,25 @@
 const ACCOUNT_ID = process.env.ACCOUNT_ID || "max-normal.near";
 
-// TODO: Use vercel-url
-const PLUGIN_URL = "https://lifi-agent.vercel.app/";
+// TODO: https://github.com/bh2smith/evm-test-agent/issues/20
+const {
+  VERCEL_ENV,
+  VERCEL_URL,
+  VERCEL_BRANCH_URL,
+  VERCEL_PROJECT_PRODUCTION_URL,
+} = process.env;
+const DEPLOYMENT_URL = (() => {
+  switch (VERCEL_ENV) {
+    case 'production':
+      return `https://${VERCEL_PROJECT_PRODUCTION_URL}`;
+    case 'preview':
+      return `https://${VERCEL_BRANCH_URL || VERCEL_URL}`;
+    default:
+      return `http://localhost:${process.env.PORT || 3000}`;
+  }
+})();
+
+const PLUGIN_URL =
+  DEPLOYMENT_URL || `${'localhost'}:${process.env.PORT || 3000}`;
 
 if (!PLUGIN_URL) {
   console.error(
