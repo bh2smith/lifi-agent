@@ -1,8 +1,9 @@
-import { logic } from "@/src/app/api/tools/bridge/util";
+import { logic } from "../src/util";
 import { getAddress } from "viem";
 
 const WETH_ADDRESS = getAddress("0x4200000000000000000000000000000000000006");
 const mockTokenInfo = {
+  name: "Wrapped Ether",
   symbol: "weth",
   address: WETH_ADDRESS,
   decimals: 18,

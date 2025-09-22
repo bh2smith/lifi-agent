@@ -1,15 +1,17 @@
 // This is all LiFi Bridge: https://li.fi/api-sdk/
-import { SUPPORTED_CHAIN_IDS } from "@/src/app/config";
+import { SUPPORTED_CHAIN_IDS } from "./config";
+import {
+  BlockchainMapping,
+  getTokenDetails,
+  loadTokenMap,
+  TokenInfo,
+} from "@bitte-ai/agent-sdk/evm";
 import {
   addressField,
   addressOrSymbolField,
-  BlockchainMapping,
   FieldParser,
   floatField,
-  getTokenDetails,
-  loadTokenMap,
   numberField,
-  TokenInfo,
 } from "@bitte-ai/agent-sdk";
 import type { ChainId, LiFiStep } from "@lifi/sdk";
 import { createConfig, getQuote } from "@lifi/sdk";
