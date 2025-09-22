@@ -15,7 +15,6 @@
     "@lifi/sdk": "^3.12.9",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "vercel-url": "^0.2.8",
     "viem": "^2.37.7"
   },
   "devDependencies": {
