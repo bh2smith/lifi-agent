@@ -1,8 +1,9 @@
 import { Router, Request, Response } from "express";
 import { validateInput } from "@bitte-ai/agent-sdk";
 import { encodeFunctionData, erc20Abi, getAddress, Hex } from "viem";
-import { getTokenMap, Input, logic, parsers } from "../util";
-import { SignRequest } from "@bitte-ai/agent-sdk/evm";
+import { Input, logic, parsers } from "../util";
+import { loadTokenMap, SignRequest } from "@bitte-ai/agent-sdk/evm";
+import { SUPPORTED_CHAIN_IDS } from "../config";
 
 const bridgeHandler = Router();
 
@@ -13,7 +14,7 @@ bridgeHandler.get("/", async (req: Request, res: Response) => {
   console.log("Parsed Input", input);
 
   const { quote, buyToken, bridgeAmount } = await logic(
-    await getTokenMap(),
+    await loadTokenMap(SUPPORTED_CHAIN_IDS),
     input,
   );
   // Create EVM transaction object
