@@ -8,7 +8,7 @@ import { SUPPORTED_CHAIN_IDS } from "../config";
 const bridgeHandler = Router();
 
 bridgeHandler.get("/", async (req: Request, res: Response) => {
-  const search = new URL(req.url).searchParams;
+  const search = new URLSearchParams(req.url);
   console.log("quote/", search);
   const input = validateInput<Input>(search, parsers);
   console.log("Parsed Input", input);
