@@ -1,19 +1,20 @@
 // This is all LiFi Bridge: https://li.fi/api-sdk/
-import { SUPPORTED_CHAIN_IDS } from "@/src/app/config";
+import { SUPPORTED_CHAIN_IDS } from "./config";
+import {
+  BlockchainMapping,
+  getTokenDetails,
+  loadTokenMap,
+  TokenInfo,
+} from "@bitte-ai/agent-sdk/evm";
 import {
   addressField,
   addressOrSymbolField,
-  BlockchainMapping,
   FieldParser,
   floatField,
-  getTokenDetails,
-  loadTokenMap,
   numberField,
-  TokenInfo,
 } from "@bitte-ai/agent-sdk";
 import type { ChainId, LiFiStep } from "@lifi/sdk";
 import { createConfig, getQuote } from "@lifi/sdk";
-import { unstable_cache } from "next/cache";
 import { getAddress, parseUnits, type Address } from "viem";
 
 createConfig({ integrator: "bh2smith.eth" });
@@ -45,23 +46,6 @@ export async function bridgeQuote({
     fromAmount: amount.toString(),
   });
   return quote;
-}
-
-// TODO: Move this into library.
-export async function getTokenMap(): Promise<BlockchainMapping> {
-  const getCachedTokenMap = unstable_cache(
-    async () => {
-      console.log("Loading TokenMap...");
-      return loadTokenMap(SUPPORTED_CHAIN_IDS);
-    },
-    ["token-map"], // cache key
-    {
-      revalidate: 86400, // revalidate 24 hours
-      tags: ["token-map"],
-    },
-  );
-
-  return getCachedTokenMap();
 }
 
 export interface Input {
